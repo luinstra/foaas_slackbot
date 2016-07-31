@@ -10,4 +10,4 @@ The variables are as follows:
 * SLACK_TOKEN - Obtained by creating a slack bot for your Slack team.
 * BOT_NAME - The name of the slack bot created for Slack team.
 * COMPANY_NAME (optional) - Used for FOAAS messages that require a company name.
-* RESPONSE_PROB (optional) - Probability of responding to any message (out of 100). Defaults to 20.
+* RESPONSE_PROB (optional) - Probability of responding to any message (out of 100). Defaults to 10.

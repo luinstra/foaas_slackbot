@@ -22,7 +22,7 @@ class FoaasBot(object):
     # every 12 hours
     FOAAS_UPDATE_INTERVAL = 60**2 * 12
 
-    def __init__(self, token, name, company=None, response_prob=20):
+    def __init__(self, token, name, company=None, response_prob=10):
         self.bot_access_token = token
         self.bot_name = name
         self.company = company
@@ -153,7 +153,8 @@ class FoaasBot(object):
         for i in xrange(3):
             try:
                 events = self.client.rtm_read()
-                logger.debug(events)
+                if len(events) > 0:
+                    logger.debug(events)
                 return events
 
             except:
@@ -202,7 +203,7 @@ if __name__ == '__main__':
     bot_access_token = os.environ['SLACK_TOKEN']
     bot_name = os.environ['BOT_NAME']
     company_name = os.environ['COMPANY_NAME'] if "COMPANY_NAME" in os.environ else None
-    response_p = os.environ['RESPONSE_PROB'] if "RESPONSE_PROB" in os.environ else 20
+    response_p = int(os.environ['RESPONSE_PROB']) if "RESPONSE_PROB" in os.environ else 10
 
     foaas_bot = FoaasBot(bot_access_token, bot_name, company=company_name, response_prob=response_p)
 
