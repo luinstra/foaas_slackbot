@@ -11,4 +11,5 @@ services:
       - SLACK_TOKEN=xoxb-52608472693-zYjEq5Nu71uOIXJ7AknD7sJ1
       - BOT_NAME=f_off_bot
 #      - COMPANY_NAME=ACME
-      - RESPONSE_PROB=20  # out of 100
+      - RESPONSE_PROB=10  # out of 100
+      - PATTERNS=["(fu)"]

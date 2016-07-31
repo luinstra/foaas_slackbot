@@ -16,13 +16,10 @@ logger.setLevel(logging.INFO)
 
 
 class FoaasBot(object):
-    # List of regex patterns that will trigger a response every time.
-    patterns = []  # [re.compile("(test)", re.I)]
-
     # every 12 hours
     FOAAS_UPDATE_INTERVAL = 60**2 * 12
 
-    def __init__(self, token, name, company=None, response_prob=10):
+    def __init__(self, token, name, company=None, response_prob=10, patterns=None):
         self.bot_access_token = token
         self.bot_name = name
         self.company = company
@@ -31,6 +28,10 @@ class FoaasBot(object):
         self.stay_alive = True
         self.foaas = []
         self.client = None
+        if patterns is None:
+            self.patterns = []
+        else:
+            self.patterns = [re.compile(p, re.I) for p in patterns]
 
     def get_operations(self):
         try:
@@ -196,6 +197,7 @@ class FoaasBot(object):
 if __name__ == '__main__':
     import signal
     import os
+    import ast
 
     assert "SLACK_TOKEN" in os.environ
     assert "BOT_NAME" in os.environ
@@ -204,8 +206,11 @@ if __name__ == '__main__':
     bot_name = os.environ['BOT_NAME']
     company_name = os.environ['COMPANY_NAME'] if "COMPANY_NAME" in os.environ else None
     response_p = int(os.environ['RESPONSE_PROB']) if "RESPONSE_PROB" in os.environ else 10
+    patterns = ast.literal_eval(os.environ['PATTERNS']) if "PATTERNS" in os.environ else None
+    if patterns is not None and not isinstance(patterns, list):
+        patterns = None
 
-    foaas_bot = FoaasBot(bot_access_token, bot_name, company=company_name, response_prob=response_p)
+    foaas_bot = FoaasBot(bot_access_token, bot_name, company=company_name, response_prob=response_p, patterns=patterns)
 
     def signal_handler(signum, frame):
         print 'Signal handler called with signal', signum
