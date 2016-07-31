@@ -4,12 +4,13 @@ import json
 import time
 import random
 import re
+from threading import Timer
 from slackclient import SlackClient
 
 
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s %(name)-12s %(levelname)-6s - %(message)s',
-                    datefmt='%m-%d %H:%M')
+                    datefmt='%m-%d %H:%M:%S')
 logger = logging.getLogger('foaas_bot')
 logger.setLevel(logging.INFO)
 
@@ -18,8 +19,8 @@ class FoaasBot(object):
     # List of regex patterns that will trigger a response every time.
     patterns = []  # [re.compile("(test)", re.I)]
 
-    # every hour
-    FOAAS_UPDATE_INTERVAL = 60**3
+    # every 12 hours
+    FOAAS_UPDATE_INTERVAL = 60**2 * 12
 
     def __init__(self, token, name, company=None, response_prob=20):
         self.bot_access_token = token
@@ -168,9 +169,13 @@ class FoaasBot(object):
         except:
             return False
 
-    def run(self):
+    def update_ops_loop(self):
         self.foaas = self.get_operations()
-        update_time = time.time()
+        logger.info("foaas messages updated.")
+        Timer(self.FOAAS_UPDATE_INTERVAL, self.update_ops_loop, ()).start()
+
+    def run(self):
+        self.update_ops_loop()
 
         if self.connect():
             while self.stay_alive:
@@ -181,9 +186,6 @@ class FoaasBot(object):
                 self.process_events(events)
                 time.sleep(1)
 
-                # check foaas.com for updates every hour
-                if time.time() - update_time > self.FOAAS_UPDATE_INTERVAL:
-                    self.foaas = self.get_operations()
         else:
             logger.error("Connection to Slack failed.")
 
