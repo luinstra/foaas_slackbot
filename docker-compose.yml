@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  foaas_bot:
+    build: ./
+    image: foaas_slackbot
+    container_name: foaas_slackbot
+    restart: always
+    stdin_open: true
+    environment:
+      - SLACK_TOKEN=xoxb-52608472693-zYjEq5Nu71uOIXJ7AknD7sJ1
+      - BOT_NAME=f_off_bot
+#      - COMPANY_NAME=ACME
+      - RESPONSE_PROB=20  # out of 100
